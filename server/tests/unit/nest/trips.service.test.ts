@@ -529,6 +529,33 @@ describe('exportICS', () => {
     expect(ics).toContain('Route: CDG → JFK');
   });
 
+  it('TRIP-SVC-024a: a flight that also carries reservation_time still uses per-side endpoint zones', () => {
+    const { user } = createUser(testDb);
+    const trip = createTrip(testDb, user.id, { title: 'Paris Trip' });
+    const reservation = createReservation(testDb, trip.id, {
+      title: 'CDG → JFK',
+      type: 'flight',
+    });
+    // TransportModal stamps reservation_time/_end_time (departure/arrival) alongside
+    // the endpoints. That branch's only zone is the linked place — a flight has none —
+    // so it floated both ends in the subscribed feed; endpoints must win (#1453).
+    testDb.prepare('UPDATE reservations SET reservation_time=?, reservation_end_time=? WHERE id=?')
+      .run('2025-06-02T09:00', '2025-06-02T12:00', reservation.id);
+    const insertEp = testDb.prepare(
+      'INSERT INTO reservation_endpoints (reservation_id, role, sequence, name, code, lat, lng, timezone, local_time, local_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    );
+    insertEp.run(reservation.id, 'from', 0, 'Paris CDG', 'CDG', 49.0, 2.5, 'Europe/Paris', '09:00', '2025-06-02');
+    insertEp.run(reservation.id, 'to', 1, 'New York JFK', 'JFK', 40.6, -73.8, 'America/New_York', '12:00', '2025-06-02');
+
+    const { ics } = svc.exportICS(trip.id);
+
+    expect(ics).toContain('DTSTART;TZID=Europe/Paris:20250602T090000');
+    expect(ics).toContain('DTEND;TZID=America/New_York:20250602T120000');
+    // The bug was a floating DTSTART/DTEND (no TZID) from the reservation_time branch.
+    expect(ics).not.toContain('DTSTART:20250602T090000');
+    expect(ics).not.toContain('DTEND:20250602T120000');
+  });
+
   it('TRIP-SVC-024b: an invalid endpoint timezone degrades to floating time instead of crashing the export', () => {
     const { user } = createUser(testDb);
     const trip = createTrip(testDb, user.id, { title: 'Bad TZ Trip' });
