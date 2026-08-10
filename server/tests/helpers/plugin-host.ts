@@ -18,7 +18,7 @@ import { TagsService } from '../../src/nest/tags/tags.service';
 import { CategoriesService } from '../../src/nest/categories/categories.service';
 import { TodoService } from '../../src/nest/todo/todo.service';
 import { PackingService } from '../../src/nest/packing/packing.service';
-import { DayNotesService } from '../../src/nest/days/day-notes.service';
+import { DayNotesService } from '../../src/nest/day-notes/day-notes.service';
 import { DaysService } from '../../src/nest/days/days.service';
 import { AssignmentsService } from '../../src/nest/assignments/assignments.service';
 import { LlmConfigResolver } from '../../src/nest/llm-parse/llm-config.resolver';
@@ -44,12 +44,14 @@ import { WeatherRpc } from '../../src/nest/weather/weather.rpc';
 import { WeatherService } from '../../src/nest/weather/weather.service';
 import { ExchangeRatesRpc } from '../../src/nest/budget/exchange-rates.rpc';
 import { TodoRpc } from '../../src/nest/todo/todo.rpc';
-import { DayNotesRpc } from '../../src/nest/days/day-notes.rpc';
+import { DayNotesRpc } from '../../src/nest/day-notes/day-notes.rpc';
 import { PackingRpc } from '../../src/nest/packing/packing.rpc';
 import { FilesRpc } from '../../src/nest/files/files.rpc';
 import { PlacesRpc } from '../../src/nest/places/places.rpc';
 import { DaysRpc } from '../../src/nest/days/days.rpc';
-import { AccommodationsRpc } from '../../src/nest/days/accommodations.rpc';
+import { AccommodationsRpc } from '../../src/nest/accommodations/accommodations.rpc';
+import { AccommodationsService } from '../../src/nest/accommodations/accommodations.service';
+import { TripMembersService } from '../../src/nest/trip-members/trip-members.service';
 import { ItineraryRpc } from '../../src/nest/assignments/itinerary.rpc';
 import { TripsRpc } from '../../src/nest/trips/trips.rpc';
 import { CostsRpc } from '../../src/nest/budget/costs.rpc';
@@ -95,7 +97,11 @@ export function createPluginRpcHostFactory(dbs: DatabaseService): PluginRpcHostF
   const notifications = makeNotificationsService(dbs, realtime);
   const llmConfig = new LlmConfigResolver(new SettingsService(dbs), dbs, addons);
   const oauth = new PluginOAuthService(dbs);
-  const trips = new TripsService(dbs, todos, packing, files, reservations, days, permissions, budget, collab, vacay, realtime, places);
+  const accommodations = new AccommodationsService(dbs, permissions, realtime);
+  // Was 12 arguments for a 14-parameter constructor; unsplash and userCleanup were
+  // undefined here and tsconfig only typechecks src, so nothing said so.
+  const trips = new TripsService(dbs, reservations, days, permissions, budget, vacay, realtime, undefined as never);
+  const members = new TripMembersService(dbs, budget, undefined as never, permissions, realtime);
   const guards = new PluginGuards(dbs, permissions, addons);
 
   const registry = createTestPluginRegistry([
@@ -109,9 +115,9 @@ export function createPluginRpcHostFactory(dbs: DatabaseService): PluginRpcHostF
     new FilesRpc(files, realtime, dbs, guards),
     new PlacesRpc(places, journey, realtime, guards),
     new DaysRpc(days, realtime, guards),
-    new AccommodationsRpc(days, realtime, guards),
+    new AccommodationsRpc(accommodations, realtime, guards),
     new ItineraryRpc(assignments, realtime, guards),
-    new TripsRpc(trips, reservations, days, membership, dbs, realtime, guards),
+    new TripsRpc(trips, reservations, days, membership, dbs, realtime, guards, accommodations, members),
     new CostsRpc(budget, dbs, realtime, guards),
     new ReservationsRpc(reservations, realtime, guards),
     new CollabRpc(collab, realtime, guards),

@@ -61,6 +61,7 @@ export default defineConfig({
       // A file matched by a glob below is EXCLUDED from the catch-all, so the last entry
       // only covers what sits directly under src/nest (app.module.ts and the like).
       thresholds: {
+        'src/nest/accommodations/**/*.ts': { statements: 92, branches: 87, functions: 99, lines: 97 },
         'src/nest/addons/**/*.ts': { statements: 99, branches: 87, functions: 99, lines: 99 },
         'src/nest/admin/**/*.ts': { statements: 86, branches: 70, functions: 89, lines: 88 },
         'src/nest/airports/**/*.ts': { statements: 68, branches: 60, functions: 93, lines: 73 },
@@ -72,12 +73,14 @@ export default defineConfig({
         'src/nest/backup/**/*.ts': { statements: 96, branches: 92, functions: 99, lines: 98 },
         'src/nest/booking-import/**/*.ts': { statements: 48, branches: 28, functions: 56, lines: 52 },
         'src/nest/budget/**/*.ts': { statements: 91, branches: 77, functions: 97, lines: 95 },
+        'src/nest/calendar/**/*.ts': { statements: 96, branches: 93, functions: 99, lines: 99 },
         'src/nest/categories/**/*.ts': { statements: 99, branches: 80, functions: 99, lines: 99 },
         'src/nest/collab/**/*.ts': { statements: 92, branches: 85, functions: 94, lines: 97 },
         'src/nest/collections/**/*.ts': { statements: 83, branches: 70, functions: 91, lines: 92 },
         'src/nest/common/**/*.ts': { statements: 95, branches: 89, functions: 99, lines: 97 },
         'src/nest/config/**/*.ts': { statements: 99, branches: 100, functions: 99, lines: 99 },
         'src/nest/database/**/*.ts': { statements: 99, branches: 100, functions: 99, lines: 99 },
+        'src/nest/day-notes/**/*.ts': { statements: 92, branches: 83, functions: 99, lines: 99 },
         'src/nest/days/**/*.ts': { statements: 92, branches: 82, functions: 98, lines: 97 },
         'src/nest/feeds/**/*.ts': { statements: 91, branches: 83, functions: 83, lines: 91 },
         'src/nest/files/**/*.ts': { statements: 97, branches: 95, functions: 99, lines: 98 },
@@ -94,6 +97,10 @@ export default defineConfig({
         'src/nest/packing/**/*.ts': { statements: 92, branches: 83, functions: 98, lines: 97 },
         'src/nest/permissions/**/*.ts': { statements: 97, branches: 92, functions: 99, lines: 97 },
         'src/nest/photos/**/*.ts': { statements: 95, branches: 92, functions: 89, lines: 95 },
+        // Landed on dev without an entry, so it sat on the 80 catch-all while
+        // measuring 99.5/99.0/97.4/100 — the gap the per-domain ratchet exists to
+        // close. Set with a few points of slack against the Linux/Windows drift.
+        'src/nest/place-enrichment/**/*.ts': { statements: 96, branches: 95, functions: 94, lines: 97 },
         'src/nest/place-photos/**/*.ts': { statements: 79, branches: 70, functions: 72, lines: 80 },
         'src/nest/places/**/*.ts': { statements: 90, branches: 80, functions: 96, lines: 94 },
         'src/nest/platform/**/*.ts': { statements: 99, branches: 99, functions: 99, lines: 99 },
@@ -109,6 +116,8 @@ export default defineConfig({
         'src/nest/transit/**/*.ts': { statements: 92, branches: 83, functions: 97, lines: 94 },
         'src/nest/trip-invite/**/*.ts': { statements: 91, branches: 93, functions: 93, lines: 89 },
         'src/nest/trip-membership/**/*.ts': { statements: 99, branches: 86, functions: 99, lines: 99 },
+        'src/nest/trip-members/**/*.ts': { statements: 93, branches: 89, functions: 99, lines: 94 },
+        'src/nest/trip-read-model/**/*.ts': { statements: 97, branches: 96, functions: 99, lines: 97 },
         'src/nest/trips/**/*.ts': { statements: 92, branches: 82, functions: 91, lines: 94 },
         'src/nest/unsplash/**/*.ts': { statements: 97, branches: 82, functions: 99, lines: 96 },
         'src/nest/vacay/**/*.ts': { statements: 82, branches: 66, functions: 89, lines: 86 },
