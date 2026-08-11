@@ -20,7 +20,7 @@ import { lazyWithRetry } from './utils/lazyWithRetry'
 import { useIsPhone } from './mobile/useIsPhone'
 import { TranslationProvider, useTranslation } from './i18n'
 import { authApi, tripsApi } from './api/client'
-import { readStartDestination, tripStartPath, DEFAULT_START_PAGE, DEFAULT_START_TRIP_TAB, SETTINGS_WAIT_MS } from './utils/startDestination'
+import { readStartDestination, tripStartPath, DEFAULT_START_PAGE, DEFAULT_START_TRIP_TAB, SETTINGS_WAIT_MS, START_DESTINATION_ROUTE } from './utils/startDestination'
 import { usePermissionsStore, PermissionLevel } from './store/permissionsStore'
 import { useInAppNotificationListener } from './hooks/useInAppNotificationListener.ts'
 import { registerSyncTriggers, unregisterSyncTriggers } from './sync/syncTriggers'
@@ -158,17 +158,21 @@ function ProtectedRoute({ children, adminRequired = false, addonId }: ProtectedR
 function PublicRoute({ children, redirectAuthed = false }: { children: React.ReactNode; redirectAuthed?: boolean }) {
   const location = useLocation()
   // redirectAuthed (only /login and /register) bounces a visitor who is already
-  // authenticated when they land here — manual URL, browser back button (#1810)
-  // — to the dashboard. Only when there is no ?redirect= target: the OAuth
-  // consent login handoff (useOAuthAuthorize.handleLoginRedirect) parks the
-  // consent URL in ?redirect= and must reach useLogin untouched — bouncing on it
-  // would drop the flow, or loop if the server still reports login_required.
+  // authenticated when they land here — manual URL, browser back button (#1810).
+  // Only on a bare URL, because every parameter this page takes is a flow that
+  // has to reach useLogin intact: ?redirect= carries the OAuth consent handoff
+  // (bouncing drops it, or loops if the server still reports login_required),
+  // ?invite= puts the form into register mode against a validated token, and
+  // ?oidc_code= / ?oidc_error= complete an external login. A visitor with any of
+  // those in the URL asked for this page on purpose.
   // Capture the flag at mount so a fresh login is left alone: it flips
   // isAuthenticated to true while the takeoff animation still plays here, before
   // useLogin navigates away.
+  // The target is START_DESTINATION_ROUTE, not /dashboard, so the bounce honours
+  // the start-page preference the same way useLogin does.
   const wasAuthenticated = useRef(useAuthStore.getState().isAuthenticated)
-  if (redirectAuthed && wasAuthenticated.current && !new URLSearchParams(location.search).has('redirect')) {
-    return <Navigate to="/dashboard" replace />
+  if (redirectAuthed && wasAuthenticated.current && !location.search) {
+    return <Navigate to={START_DESTINATION_ROUTE} replace />
   }
   return (
     <ErrorBoundary key={location.pathname} boundaryId="public-route" level="route">

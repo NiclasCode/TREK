@@ -294,17 +294,29 @@ describe('Public routes', () => {
 // ── PublicRoute — redirect already-authenticated visitors ─────────────────────
 
 describe('PublicRoute — already authenticated', () => {
-  it('FE-COMP-APP-012a: /login redirects to /dashboard when already authenticated', async () => {
+  /**
+   * The bounce goes to START_DESTINATION_ROUTE, so RootRedirect resolves where
+   * it actually lands — which needs settings, exactly like the cases above.
+   */
+  function seedAuthedOnDashboard() {
     seedAuth({ isAuthenticated: true, user: buildUser() })
+    useSettingsStore.setState({
+      isLoaded: true,
+      settings: buildSettings({ start_page: 'dashboard' }),
+    })
+  }
+
+  it('FE-COMP-APP-012a: /login sends an authenticated visitor to the start destination', async () => {
+    seedAuthedOnDashboard()
     renderApp('/login')
-    await waitFor(() => expect(screen.getByText('Dashboard')).toBeInTheDocument())
+    await waitFor(() => expect(currentPath()).toBe('/dashboard'))
     expect(screen.queryByText('Login')).not.toBeInTheDocument()
   })
 
-  it('FE-COMP-APP-012b: /register redirects to /dashboard when already authenticated', async () => {
-    seedAuth({ isAuthenticated: true, user: buildUser() })
+  it('FE-COMP-APP-012b: /register does the same', async () => {
+    seedAuthedOnDashboard()
     renderApp('/register')
-    await waitFor(() => expect(screen.getByText('Dashboard')).toBeInTheDocument())
+    await waitFor(() => expect(currentPath()).toBe('/dashboard'))
     expect(screen.queryByText('Login')).not.toBeInTheDocument()
   })
 
@@ -312,10 +324,21 @@ describe('PublicRoute — already authenticated', () => {
     // The consent page parks its URL in ?redirect= when it needs a login; that
     // flow must reach the form even for an authenticated visitor, so the guard
     // stays out of the way whenever a redirect target is present.
-    seedAuth({ isAuthenticated: true, user: buildUser() })
-    renderApp('/login?redirect=' + encodeURIComponent('/oauth/consent?client_id=x'))
+    seedAuthedOnDashboard()
+    const target = '/login?redirect=' + encodeURIComponent('/oauth/consent?client_id=x')
+    renderApp(target)
     await waitFor(() => expect(screen.getByText('Login')).toBeInTheDocument())
-    expect(screen.queryByText('Dashboard')).not.toBeInTheDocument()
+    expect(currentPath()).toBe(target)
+  })
+
+  it('FE-COMP-APP-012d: /register?invite= reaches the form so the token can be validated', async () => {
+    // An invite link is the one way someone joins a trip they were invited to
+    // from an account they are already signed into; bouncing it would swallow
+    // the token silently.
+    seedAuthedOnDashboard()
+    renderApp('/register?invite=abc123')
+    await waitFor(() => expect(screen.getByText('Login')).toBeInTheDocument())
+    expect(currentPath()).toBe('/register?invite=abc123')
   })
 })
 
