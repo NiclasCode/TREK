@@ -311,10 +311,20 @@ export class CalendarService {
         // Prefer the stored IANA zone; fall back to the endpoint's coordinates.
         const last = ordered![ordered!.length - 1];
         const startZone = first.timezone || resolveTimeZone(first.lat, first.lng);
-        let out = dtLine('DTSTART', `${first.local_date}T${first.local_time}`, startZone);
+        const startWallClock = `${first.local_date}T${first.local_time}`;
+        let out = dtLine('DTSTART', startWallClock, startZone);
         if (last !== first && isDate(last.local_date) && isTime(last.local_time)) {
           const endZone = last.timezone || resolveTimeZone(last.lat, last.lng);
           out += dtLine('DTEND', `${last.local_date}T${last.local_time}`, endZone);
+        } else if (r.reservation_end_time) {
+          // No second timed endpoint, so the arrival side still lives in
+          // reservation_end_time — a rental car imported with only a geocoded
+          // pickup is the common shape. Taking the endpoint branch without this
+          // would drop the DTEND the reservation_time branch used to emit and
+          // shrink a multi-day booking to a point. The departure zone is the
+          // best one on hand for that end too.
+          const endDt = fmtDateTime(r.reservation_end_time, startWallClock);
+          if (endDt.length >= 15) out += dtLine('DTEND', r.reservation_end_time, startZone, startWallClock);
         }
         return out;
       }
