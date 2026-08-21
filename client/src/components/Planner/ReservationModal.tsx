@@ -378,6 +378,28 @@ export function ReservationModal({ isOpen, onClose, onSave, reservation, days, p
       )
     : []
 
+  const canUploadFiles = !!onFileUpload
+
+  useEffect(() => {
+    console.log('TEST1')
+    if (!canUploadFiles || !isOpen) return
+    const onPaste = (e: ClipboardEvent) => {
+      console.log('TRIGGER')
+      const items = e.clipboardData?.items
+      if (!items) return
+      for (const item of Array.from(items)) {
+        if (item.type.startsWith('image/') || item.type === 'application/pdf') {
+          e.preventDefault()
+          const file = item.getAsFile()
+          if (file) setPendingFiles(prev => [...prev, file])
+          return
+        }
+      }
+    }
+    document.addEventListener('paste', onPaste);
+    return () => document.removeEventListener('paste', onPaste);
+  }, [isOpen, canUploadFiles]);
+
   const inputClass = 'w-full border border-edge rounded-[10px] px-[12px] py-[8px] text-[13px] font-[inherit] outline-none box-border text-content bg-surface-input'
   const labelClass = 'block text-[11px] font-semibold text-content-faint mb-[5px] uppercase tracking-[0.03em]'
 
