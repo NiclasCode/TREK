@@ -106,6 +106,7 @@ export function ReservationModal({ isOpen, onClose, onSave, reservation, days, p
   const [linkedFileIds, setLinkedFileIds] = useState<number[]>([])
   // Travelers assigned to this booking (#1517) — seeded on open, persisted after the save resolves.
   const [travelerIds, setTravelerIds] = useState<Set<number>>(new Set())
+  const [draggedFiels, setDraggedFiles] = useState<File[]>([])
 
   const assignmentOptions = useMemo(
     () => buildAssignmentOptions(days, assignments, t, locale),
@@ -381,11 +382,8 @@ export function ReservationModal({ isOpen, onClose, onSave, reservation, days, p
   const canUploadFiles = !!onFileUpload
 
   useEffect(() => {
-    console.log('TEST1')
     if (!canUploadFiles || !isOpen) return
-    const onPaste = (e: ClipboardEvent) => {
-      console.log('TRIGGER')
-      const items = e.clipboardData?.items
+    const handleFiles = (items: DataTransferItemList, e: Event) => {
       if (!items) return
       for (const item of Array.from(items)) {
         if (item.type.startsWith('image/') || item.type === 'application/pdf') {
@@ -396,8 +394,25 @@ export function ReservationModal({ isOpen, onClose, onSave, reservation, days, p
         }
       }
     }
+    const onPaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items 
+      handleFiles(items, e);
+    }
+    const onDrop = (e: DragEvent) => {
+      const items = e.dataTransfer?.items;
+      handleFiles(items, e);
+    }
+    const onDragOver = (e: DragEvent) => {
+      e.preventDefault();
+    }
+    document.addEventListener('dragover', onDragOver)
+    document.addEventListener('drop', onDrop);
     document.addEventListener('paste', onPaste);
-    return () => document.removeEventListener('paste', onPaste);
+    return () => {
+      document.removeEventListener('dragover', onDragOver)
+      document.removeEventListener('drop', onDrop)
+      document.removeEventListener('paste', onPaste)
+    };
   }, [isOpen, canUploadFiles]);
 
   const inputClass = 'w-full border border-edge rounded-[10px] px-[12px] py-[8px] text-[13px] font-[inherit] outline-none box-border text-content bg-surface-input'
