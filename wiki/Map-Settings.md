@@ -72,7 +72,7 @@ You can also enter a custom `mapbox://styles/USER/ID` URL directly.
 
 ### 3D Buildings & Terrain
 
-Enables pitch and building extrusions on all styles. Terrain elevation (DEM-based height) is additionally applied on satellite styles (`Satellite` and `Satellite Streets`). On non-satellite styles only building extrusions are added; terrain is intentionally omitted on those styles because the elevation data would cause route lines to visually drift away from the HTML place markers.
+Enables pitch and building extrusions on all styles. Terrain elevation (DEM-based height) is additionally applied on `Satellite`, `Satellite Streets` and `Outdoors`; `Standard Satellite` brings its own terrain from Mapbox and is left alone. On the remaining styles — including plain `Mapbox Standard`, whose built-in terrain TREK switches off — only building extrusions are added, because the elevation data would cause route lines to visually drift away from the HTML place markers.
 
 ### High Quality Mode *(Experimental)*
 
