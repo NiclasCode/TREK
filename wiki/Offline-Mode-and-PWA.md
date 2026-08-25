@@ -83,7 +83,7 @@ The stats panel shows cached trips, pending changes, conflicts and failed change
 - A change you made offline that **deletes** an item wins over a concurrent server edit of that same item ("delete wins"); only edit-vs-edit conflicts are surfaced for resolution.
 - The conflict token has one-second resolution, so two edits to the same field within the same second can't be told apart and fall back to last-write-wins (only relevant to sub-second races; normal offline windows are unaffected).
 - New trips created while offline are queued and synced when connectivity is restored.
-- Photo uploads require connectivity; photo and video attachments are not pre-cached, all other file attachments are pre-cached automatically during sync.
+- Photo uploads require connectivity. Photo and video attachments are not pre-cached; every other file attachment is pre-cached automatically during sync.
 - Real-time collaboration features require an active WebSocket connection.
 - Mapbox GL / vector tiles are not pre-downloaded; raster (Leaflet) tiles are. With map-tile storage off, individually viewed tiles may still be cached opportunistically by the service worker.
 

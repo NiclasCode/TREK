@@ -39,7 +39,7 @@ A request for an account that can actually be reset writes **two** rows: one wit
 | Action key | Description |
 |---|---|
 | `user.passkey_register` | Passkey enrolled |
-| `user.passkey_delete` | Passkey removed (resource = credential ID) |
+| `user.passkey_delete` | Passkey removed (resource = the passkey's numeric ID) |
 | `user.passkey_clone_suspected` | A passkey presented a signature counter that did not advance — a possible cloned authenticator. That assertion is rejected, the credential stays enabled |
 
 ### Trips
@@ -53,7 +53,7 @@ A request for an account that can actually be reset writes **two** rows: one wit
 | `trip.transfer_ownership` | Trip ownership transferred (includes the trip title and both owner emails) |
 | `trip.invite_link_create` | Trip invite link created or rotated (a trip has one link, so creating it again replaces the previous token) |
 | `trip.invite_link_delete` | Trip invite link revoked |
-| `trip.invite_link_join` | Someone joined a trip through an invite link |
+| `trip.invite_link_join` | An invite link was accepted (`joined` in details). The row is written even when nobody was added — the trip owner or an existing member opening the link logs `joined: false` |
 
 ### Admin actions
 

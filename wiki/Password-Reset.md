@@ -43,7 +43,7 @@ If the admin has globally disabled password login, no reset link is ever issued.
 
 ## Admin-initiated reset
 
-An admin can set a new password for any user directly from the admin panel (**Admin → Users**, edit the user). Leaving the **New Password** field empty keeps the current password; entering one saves it immediately — no email is required. Setting a password this way also bumps the account's `password_version`, which signs the user out of every live session, deletes all of their MCP tokens, and revokes their OAuth tokens.
+An admin can set a new password for any user directly from the admin panel (**Admin → Users**, edit the user). Leaving the **New Password** field empty keeps the current password; entering one saves it immediately — no email is required. Setting a password this way also bumps the account's `password_version`, which signs the user out of every live session; separately, it deletes all of their MCP tokens and revokes their OAuth tokens.
 
 There is no **"Force password change on next login"** option in the Admin Panel. That prompt is raised only for the admin account TREK seeds on first boot and for accounts restored with the `reset-admin.js` recovery script (see [Troubleshooting](Troubleshooting)). An admin-set password neither raises the flag nor clears it, so a user who already carries it is still asked to choose their own password at the next sign-in.
 

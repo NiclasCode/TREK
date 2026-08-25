@@ -38,7 +38,7 @@ On mobile, the header is a floating glass bar: the TREK logo on the left (tap it
 
 On wide screens a sticky right column shows the **Currency**, **Collections** (only with the Collections addon enabled), **Timezones**, and **Upcoming reservations** widgets, plus any widget a plugin contributes. Each one is switched on or off separately for desktop and mobile under **Settings → Appearance → Dashboard widgets**; desktop also has a **Right sidebar** master toggle that removes the whole column, and the column disappears on its own once every widget in it is off.
 
-On mobile, the same widgets are inline panels stacked between the spotlight card and the trip list, not a bottom sheet. How they stack — and where the trip list sits among them — is set on the phone under **Settings → Appearance → Mobile → Dashboard order**.
+On mobile, the same widgets are inline panels below the spotlight card, not a bottom sheet. By default the trip list comes first and the widgets stack underneath it. How they stack — and where the trip list sits among them — is set on the phone under **Settings → Appearance → Mobile → Dashboard order**.
 
 See [Dashboard-Widgets](Dashboard-Widgets) for full usage details.
 

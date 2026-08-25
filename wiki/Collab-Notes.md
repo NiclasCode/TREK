@@ -53,7 +53,7 @@ The following file types are blocked:
 - Scripts: `.js`, `.jsx`, `.ts`, `.tsx`, `.mjs`, `.cjs`, `.php`, `.py`, `.rb`, `.pl`
 - Executables: `.exe`, `.bat`, `.sh`, `.cmd`, `.msi`, `.dll`, `.com`, `.vbs`, `.ps1`, `.app`
 
-An attachment is also rejected when its MIME type contains `svg`, `html`, or `javascript`, whatever its extension says. The same blocklist guards the trip file manager (see [Documents-and-Files](Documents-and-Files)), where uploads must additionally match the admin's **Allowed File Types** setting — note attachments are not subject to that setting.
+An attachment is also rejected when its MIME type contains `svg`, `html`, or `javascript`, whatever its extension says. The same blocklist guards the trip file manager (see [Documents-and-Files](Documents-and-Files)), where uploads must additionally match the admin's **Allowed File Types** setting (video files are exempt from that list) — note attachments are not subject to it at all.
 
 Image thumbnails are shown on the note card. Click a thumbnail to open a lightbox. PDFs open in a document viewer overlay.
 

@@ -8,7 +8,7 @@ No. When no Google Maps key is configured, TREK automatically falls back to Open
 
 Yes. TREK is a Progressive Web App. After your first visit, the service worker (powered by Workbox) caches map tiles (Carto, OpenStreetMap, Mapbox GL and OpenFreeMap), uploaded covers and avatars, and every page of the app. Subsequent visits work without a network connection for already-cached content. Trip data does not come from that cache: it is stored per user in IndexedDB and read back through TREK's own offline layer, with writes queued and replayed once you reconnect. See [Offline Mode and PWA](Offline-Mode-and-PWA) for installation instructions.
 
-> **Note:** API responses are **never** stored in the service-worker cache. Workbox keys its entries by URL and cannot vary them on the session cookie, so on a shared device one account's cached data could be served to the next.
+> **Note:** API responses are **never** stored in the service-worker cache. Workbox keys its entries by URL and cannot vary them on the session cookie, so caching them would mean one account's data could be served to the next on a shared device.
 
 ## How many MCP tokens can I create?
 

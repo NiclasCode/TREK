@@ -16,7 +16,7 @@ Complete reference for all environment variables TREK reads.
 
 ## Startup Validation
 
-TREK checks this whole surface once at boot. A variable that is **unset or blank** falls back to its documented
+TREK checks almost all of this surface once at boot. A variable that is **unset or blank** falls back to its documented
 default; a variable that is **present but malformed** aborts startup, with an aggregated report naming every
 offending value:
 
@@ -30,10 +30,12 @@ In Docker this crash-loops the container until the value is corrected or removed
 `true`/`false`, `1`/`0`, `on`/`off`, `yes`/`no` in any casing — anything else counts as malformed. Variables TREK
 does not know are passed through untouched.
 
-`TREK_DB_JOURNAL_MODE` and `TREK_DB_SYNCHRONOUS` are the exception: they log a warning and fall back instead of
+`TREK_DB_JOURNAL_MODE` and `TREK_DB_SYNCHRONOUS` are exceptions: they log a warning and fall back instead of
 aborting, because `reset-admin.js` — the way back into a locked-out instance — reads the same two variables and has
-to keep working. `NODE_ENV` and `TZ` are not validated at all, so a non-standard value like `NODE_ENV=staging` still
-boots.
+to keep working. The three plugin caps `TREK_PLUGIN_AI_PER_DAY`, `TREK_PLUGIN_NOTIFY_PER_DAY` and
+`TREK_PLUGIN_AUDIT_MAX_ROWS` are read by the plugin host rather than by the boot schema, so a malformed value there
+falls back to the default without a warning. `NODE_ENV` and `TZ` are not validated at all, so a non-standard value
+like `NODE_ENV=staging` still boots.
 
 ---
 

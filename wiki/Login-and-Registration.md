@@ -21,13 +21,13 @@ The **Remember me** switch below the password field decides how long the session
 
 Both durations are configurable per instance, see [Environment-Variables](Environment-Variables). Your choice is carried through the MFA step, through a password change, and through SSO sign-in. While you keep using TREK the cookie is silently re-issued once the token is past half its lifetime, with the same Remember me semantics, so an active session never expires mid-use. Only cookie sessions are renewed this way — API and MCP clients authenticating with a bearer token are not.
 
-Accounts created through registration, the **"Try demo"** button, or a passkey never pass through this switch and get the historical default instead: a persistent cookie lasting `SESSION_DURATION`.
+Sign-ins that never pass through this switch — registration, the **"Try demo"** button and passkey sign-in — get the historical default instead: a persistent cookie lasting `SESSION_DURATION`.
 
 ### Forced password change
 
 Some accounts are flagged as needing a new password: the admin account TREK seeds on first boot always is, and so is an account restored with the `reset-admin.js` recovery script (see [Troubleshooting](Troubleshooting)). For those accounts a **Set new password** form is shown immediately after a successful login (or after the MFA step). The session cookie has already been issued at that point — the app simply keeps you on the form until the new password is saved, and saving it re-issues the cookie and signs your other sessions out.
 
-There is no control in the Admin Panel that flags an existing account. When an admin sets a new password for a user (see [Admin-Users-and-Invites](Admin-Users-and-Invites)), that account is not prompted to change it again on the next sign-in.
+There is no control in the Admin Panel that flags an existing account. An admin-set password (see [Admin-Users-and-Invites](Admin-Users-and-Invites)) neither raises the flag nor clears it, so a user who already carries it is still asked to choose their own password at the next sign-in.
 
 ## Registering
 
@@ -75,7 +75,7 @@ The seeded admin is flagged as requiring a password change, so you are forced to
 
 Two setups skip the seeder entirely. `DEMO_MODE=true` seeds the demo data instead (see [Demo-Mode](Demo-Mode)), and on an **OIDC-only** install no local account is created at all — there the first user who signs in through the identity provider is assigned the **admin** role.
 
-See [Quick-Start](Quick-Start).
+See [Quick-Start](Quick-Start) for the full first-boot walkthrough.
 
 ## Rate limiting
 

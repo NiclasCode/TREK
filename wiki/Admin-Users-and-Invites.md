@@ -27,7 +27,7 @@ Click the pencil icon on any row to open the edit form. You can change:
 
 - **Username**
 - **Email address**
-- **Role** — toggle between `user` and `admin`
+- **Role** — a dropdown with **User** and **Administrator**
 - **Password** — set a new password; must be at least 8 characters
 
 Click **Save** to apply changes.

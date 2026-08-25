@@ -6,7 +6,7 @@ The My Trips dashboard has a widget sidebar holding a currency converter, a time
 
 ## Where they appear
 
-On large screens (desktop/wide tablet), the widgets appear in a sticky right-hand sidebar of the [My-Trips-Dashboard](My-Trips-Dashboard). At 1280px and below that column stops being sticky and reflows underneath the trip grid, first side by side and then as stacked full-width cards. On a phone (under 768px) the mobile dashboard takes over and renders each enabled widget inline as its own panel, interleaved with the trip list in an order you can rearrange under Settings → Appearance. There is no bottom sheet for the widgets on any screen size.
+On large screens (desktop/wide tablet), the widgets appear in a sticky right-hand sidebar of the [My-Trips-Dashboard](My-Trips-Dashboard). At 1280px and below that column stops being sticky and reflows underneath the trip grid as a wrapping row of cards. On a phone (under 768px) the mobile dashboard takes over and renders each enabled widget inline as its own panel, interleaved with the trip list in an order you can rearrange under Settings → Appearance. There is no bottom sheet for the widgets on any screen size.
 
 Each user configures their own widgets independently. Whether each widget is shown or hidden is saved to your account on the server (synced across devices). The selected currency pair and the saved timezone list live on your account as well, so they follow you to every device you sign in on.
 
@@ -18,7 +18,7 @@ Widget visibility lives in **Settings → Appearance**, under **Dashboard widget
 - **Desktop → Below the hero** switches the Atlas / countries, Trips total, Days traveled and Distance flown tiles.
 - **Mobile → Bottom of page** switches Currency, Collections, Timezones and Upcoming reservations; **Mobile → Below the hero** switches Trips total and Days traveled.
 
-Turning a widget off removes it from the sidebar; the preference is saved to your account.
+Turning a widget off removes it from the dashboard; the preference is saved to your account.
 
 ---
 

@@ -349,7 +349,7 @@ bytes against a secret you hold in `ctx.config` (admin-set instance setting) or
 `JSON.stringify` won't reproduce the key order, whitespace and unicode escaping the
 sender signed, so the HMAC won't match.
 
-Two things the snippet below handles and yours has to as well. TREK only keeps the
+The snippet below handles two things, and yours has to as well. TREK only keeps the
 raw bytes when a body parser ran, i.e. for `application/json` and
 `application/x-www-form-urlencoded` — a webhook posted as `text/plain` or a GET
 callback with no body arrives with `rawBodyBase64: null`, so **fail closed** instead
