@@ -71,7 +71,7 @@ Electronics, Charger, 50, Suitcase, checked
 
 Commas, semicolons and tabs all work as separators, and a quoted value keeps its commas (`"Shirt, blue"`). A line with a single value is treated as just a name. A line without a category lands in **Other**, and a bag name that does not exist yet is created for you. Imported items are appended; nothing already on the list is removed.
 
-Import is the only way to load weights and bag assignments in bulk — applying a template brings across names and categories only. It requires the `packing_edit` permission.
+Import is the only place in the UI that loads weights and bag assignments in bulk — applying a template brings across names and categories only. It requires the `packing_edit` permission.
 
 ## Sharing packing items
 

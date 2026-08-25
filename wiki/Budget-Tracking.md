@@ -38,9 +38,9 @@ Expenses written before the Costs rework carried free-text categories. Those are
 
 ## Expense items
 
-Expenses are listed as a ledger grouped by **day**, newest day first, with the day's total on the right of each group header. Recorded settle-up payments sit in the same list, so the ledger reads as everything that happened on the trip's money in order. A row shows the category as a coloured tab, the name, the payer chips with what each of them put in, the note, and the total in the trip currency — plus a green **you lent** / red **you borrowed** chip under the amount when the split leaves you up or down on it. An expense entered in another currency shows the original and the converted amount under the name.
+Expenses are listed as a ledger grouped by **day**, newest day first, with the day's total on the right of each group header. Recorded settle-up payments sit in the same list, so the ledger reads as everything that happened on the trip's money in order. A row shows the category as a coloured tab, the name, the payer chips with what each of them put in, the note, and the total in your display currency — plus a green **you lent** / red **you borrowed** chip under the amount when the split leaves you up or down on it. An expense entered in another currency shows the original and the converted amount under the name.
 
-Above the list are a search box, a category filter, a day filter, an **All / Mine / Owed** switch and the CSV export button.
+Above the list are a search box, a category filter, a day filter, an **All / Paid by me / I'm owed** switch and the CSV export button.
 
 Click **Add expense**, or the pencil beside a row, to open the expense editor:
 
@@ -67,9 +67,9 @@ Deleting the booking or the place deletes its linked expense with it. Removing t
 
 - **One person paid** — pick a member from the dropdown. This is the default.
 - **Multiple people paid** — switch with the link beside the label, include each payer and type what each of them put in. The amounts have to add up to the total; until they do, the dialog reads *Payer amounts must add up to …* and refuses to save.
-- **No one paid yet** — the first entry in the single-payer dropdown, for an expense you are only planning. The amount still counts toward **Total trip spend**, but it stays out of the balances and out of the settle-up.
+- **No one paid yet** — the first entry in the single-payer dropdown, for an expense you are only planning. The amount still counts toward **Total trip spend**, and everyone on its split is still charged their share in **Balances** — what is missing is the credit side, so nobody is recorded as having covered it.
 
-An expense with no payer is flagged **Unfinished** on its row and counted into the **Outstanding amount** card, which is where to look when a figure you entered never turns up in anyone's balance.
+An expense with no payer is flagged **Unfinished** on its row and counted into the **Outstanding amount** card, which is where to look when the balances show money owed that nobody is down as having paid.
 
 ## Splitting costs
 

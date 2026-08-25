@@ -38,7 +38,7 @@ An admin can require 2FA for all users. Before enabling this setting the admin m
 
 If the setting is active and your account has neither 2FA nor a passkey, any API request after login returns a 403 error and the client redirects you to **Settings → Account** with a prompt to complete 2FA setup. You cannot use the app until setup is complete. See [Admin-Permissions](Admin-Permissions).
 
-A user-verified **passkey** satisfies this policy exactly like a TOTP authenticator does: with at least one passkey on your account nothing is blocked and you never need an authenticator app. That stays true if an admin later turns passkey login off again — an existing passkey keeps satisfying the policy.
+A user-verified **passkey** satisfies this policy the way a TOTP authenticator does: with at least one passkey on your account the API stops blocking you and you never need an authenticator app. That holds even if an admin later turns passkey login off again — an existing passkey keeps satisfying the policy. Real-time sync is the one exception: the WebSocket handshake accepts only TOTP, so a passkey-only account under this policy can use TREK normally but never receives live updates from other members. Nothing tells you — the client simply keeps retrying the connection.
 
 Whether enrolling a passkey is a way *out* of the lockout depends on the instance. Passkey login is off by default (see [Passkeys](Passkeys)); where an admin has turned it on, the enrolment endpoints stay reachable while the rest of the API is blocked, so you can add a passkey from **Settings → Account** instead of setting up an authenticator app. Where it is off, TOTP setup is the only way to unblock yourself — or ask an admin to reset your 2FA.
 

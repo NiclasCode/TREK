@@ -20,11 +20,11 @@ Copy this URL and send it to anyone you want to share the trip with. No TREK acc
 
 ### How long a link lives
 
-A share link is valid for **90 days**, counted from the last time it was saved. Creating the link writes a 90-day expiry, and flipping any permission toggle re-saves the link and writes a new one, so a link you actively manage never lapses under you.
+A share link is valid for **90 days**, counted from the last time it was saved. Creating the link writes a 90-day expiry, and flipping one of the unlocked permission toggles re-saves the link and writes a new one, so a link you actively manage never lapses under you.
 
 Once the 90 days are up, visitors get **Link expired or invalid**. The share section in the Members & Share modal does not show this — it keeps displaying the URL and the **Delete link** button, because the owner-side lookup ignores the expiry. There is no expired badge to warn you.
 
-To revive a lapsed link, flip any permission toggle (and flip it back if you did not mean to change anything). That re-saves the **same** token for another 90 days and the old URL starts working again. If you want a genuinely different URL, because the old one leaked for instance, use **Delete link** and then **Create link**.
+To revive a lapsed link, flip one of the unlocked toggles — **Bookings**, **Packing**, **Costs** or **Chat** — and flip it back if you did not mean to change anything. **Map & Plan** is locked, so clicking it sends no request and will not revive the link. Flipping an unlocked toggle re-saves the **same** token for another 90 days and the old URL starts working again. If you want a genuinely different URL, because the old one leaked for instance, use **Delete link** and then **Create link**.
 
 Links created before TREK added the expiry carry no expiry at all and work indefinitely. The first time you change one of their toggles, that save puts them on the 90-day clock like every other link.
 

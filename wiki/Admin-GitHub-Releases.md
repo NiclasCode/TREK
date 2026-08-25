@@ -26,7 +26,7 @@ Below the support cards, a chronological timeline lists GitHub releases for the 
 - **Release date** and author
 - A **Show details / Hide details** toggle that expands the release notes (Markdown rendered inline)
 
-Pre-release entries are hidden unless the server has both found a newer version and is itself running a pre-release. In every other case, including a pre-release install that is already on the newest published version, the timeline shows stable releases only.
+Pre-release entries are hidden unless the server has both found a newer version and is itself running a pre-release. In every other case, including a pre-release install that is already on the newest pre-release, the timeline shows stable releases only.
 
 Releases load 10 at a time. Click **Load more** at the bottom of the timeline to fetch additional pages.
 

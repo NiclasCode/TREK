@@ -56,7 +56,7 @@ If an admin leaves the instance config blank, each user can configure their own 
 
 > *Choose the AI model used to extract bookings from uploaded files. This applies only when your administrator has not configured a model for the whole instance.*
 
-The fields are a **Provider** — only **OpenAI** or **Anthropic** here — a **Model** id, and an **API key** that is *stored encrypted* (leave blank to keep the current key). There is no personal Base URL: the address this server calls is instance configuration, so a local (Ollama) model can only be set up by an admin on the addon, and the server answers 403 to anyone — admins included — who tries to store a personal base URL or a personal `local` provider.
+The fields are a **Provider** (only **OpenAI** or **Anthropic** here), a **Model** id, and an **API key** that is *stored encrypted* (leave blank to keep the current key). There is no personal Base URL: the address this server calls is instance configuration, so a local (Ollama) model can only be set up by an admin on the addon, and the server answers 403 to anyone, admins included, who tries to store a personal base URL or a personal `local` provider.
 
 There is also a **Send documents as images** toggle. It is stored per user, but extraction currently ignores it: only Anthropic is sent the raw PDF, every other provider always gets the extracted text.
 

@@ -82,7 +82,7 @@ Hiding a widget here only affects your own dashboard. Widgets that depend on an 
 Opened on a phone, the Appearance screen carries an extra **Mobile** card that the desktop tab does not have:
 
 - **Bottom navbar** — which items sit in the bottom bar, in which order, and which are demoted under **More**. **Dashboard** is pinned first and cannot be moved; two more items fit next to it, and a counter above the list shows how full the bar is. Leaving both lists untouched keeps TREK's automatic split.
-- **Dashboard order** — reorder how the trip list and the inline widgets stack on the phone dashboard. The featured trip always stays on top. A block whose widget is switched off above keeps its place in the list and is marked **Hidden**.
+- **Dashboard order** — reorder how the trip list and the inline widgets stack on the phone dashboard. The featured trip always stays on top. A block whose widget is switched off under **Dashboard widgets** keeps its place in the list and is marked **Hidden**.
 
 Both are stored on your account alongside the rest of the appearance settings, and both are cleared by **Reset to defaults**.
 

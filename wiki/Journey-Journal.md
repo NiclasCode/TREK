@@ -83,7 +83,7 @@ A journey can also be laid out as a printable photo book. Open a journey and cli
 
 The book belongs to its journey and inherits its access exactly: anyone who may read the journey may open its book, and only those who may edit the journey may save or delete it. There is no second set of permissions to keep in step.
 
-Studio is desktop only. On a phone the journey opens as usual and Studio shows a "Studio needs a bigger screen" notice with a way back — making the PDF is desktop only too.
+Studio is desktop only: it needs a viewport at least 1024 px wide. Below that — a tablet, or a narrowed browser window — it opens over the journey and shows a "Studio needs a bigger screen" notice with a way back. On a phone the journey opens in its mobile view as usual and Studio is not offered at all. Making the PDF is desktop only too.
 
 ## Plugin entry rows
 

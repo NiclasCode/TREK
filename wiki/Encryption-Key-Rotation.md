@@ -38,9 +38,9 @@ All encrypted settings (API keys, SMTP password, OIDC secret, MFA secrets, notif
 
 ## Backing up the key
 
-Your backup ZIP **does** include the encryption key: `./data/.encryption_key` is bundled into every archive, manual and automatic, as a root-level `.encryption_key` entry, so a restore onto a different install can still decrypt the stored secrets. That makes the ZIP exactly as sensitive as the key itself — store and transfer it accordingly.
+Unless you set `ENCRYPTION_KEY` in the environment, your backup ZIP **does** include the encryption key: `./data/.encryption_key` is bundled into every archive, manual and automatic, as a root-level `.encryption_key` entry, so a restore onto a different install can still decrypt the stored secrets. That makes the ZIP exactly as sensitive as the key itself — store and transfer it accordingly.
 
-The key is left out only when you supply `ENCRYPTION_KEY` through the environment, because then the file is not the source of truth. On those installs no backup carries the key, so keep it somewhere separate — for example, in a password manager or a secrets manager. See [Backups](Backups).
+On installs that supply the key through the environment the file is not the source of truth, so no backup carries it. Keep it somewhere separate — for example, in a password manager or a secrets manager. See [Backups](Backups).
 
 To find your current key: check the `ENCRYPTION_KEY` environment variable or read `./data/.encryption_key`.
 

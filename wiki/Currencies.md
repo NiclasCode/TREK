@@ -61,7 +61,7 @@ It has two modes:
 
 Leave it on **Trip currency** unless you specifically want everything in your home currency regardless of where you are going.
 
-An administrator can set an instance-wide default (Admin → User Defaults), and it interacts with **Trip currency** in a way worth knowing: picking **Trip currency** stores an *empty* value, and an empty value on a defaultable setting counts as "not set", so the admin's currency is applied again (#1634). While an instance-wide default currency is configured, there is no way back to per-trip currencies from the Settings page — the admin has to clear it.
+An administrator can set an instance-wide default (Admin → User Defaults), and it interacts with **Trip currency**: picking **Trip currency** stores an *empty* value, and an empty value on a defaultable setting counts as "not set", so the admin's currency is applied again (#1634). While an instance-wide default currency is configured, there is no way back to per-trip currencies from the Settings page — the admin has to clear it.
 
 > Display conversion uses **live** rates, not the frozen ones — it is a view, and a view should reflect today. This is why a converted total can shift slightly day to day while the underlying balances stay rock steady.
 

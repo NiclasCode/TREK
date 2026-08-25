@@ -24,7 +24,7 @@ All changes to a trip — places, day plans, reservations, budget entries, and p
 - **4001** — missing, invalid, or expired token; user not found
 - **4403** — site-wide MFA is required but the account does not have MFA enabled
 
-An origin rejection happens before the socket exists, so it produces no close code at all — the browser just reports a failed connection. And because clients that send no `Origin` header are exempt, curl, CLI and MCP clients keep connecting while every browser fails, which makes it look like a client bug. If real-time sync stops working behind a reverse proxy, check that `ALLOWED_ORIGINS` lists the exact scheme, host, and port the browser uses: the comparison is a plain string match, so `https://trek.example.com` matches neither `http://trek.example.com` nor `https://trek.example.com:443`. See [Environment-Variables](Environment-Variables) and [Reverse-Proxy](Reverse-Proxy).
+An origin rejection happens before the socket exists, so it produces no close code at all — the browser just reports a failed connection. And because clients that send no `Origin` header are exempt, curl and other CLI clients keep connecting while every browser fails, which makes it look like a client bug. If real-time sync stops working behind a reverse proxy, check that `ALLOWED_ORIGINS` lists the exact scheme, host, and port the browser uses: the comparison is a plain string match, so `https://trek.example.com` matches neither `http://trek.example.com` nor `https://trek.example.com:443`. See [Environment-Variables](Environment-Variables) and [Reverse-Proxy](Reverse-Proxy).
 
 ## The Collab addon
 
