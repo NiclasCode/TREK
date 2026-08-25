@@ -15,7 +15,7 @@ A backup is a ZIP archive with these entries:
 | Entry | Contents |
 |---|---|
 | `travel.db` | The full SQLite database |
-| `uploads/` | All uploaded attachments, covers, and avatars (default location — see [[Admin: Storage|Admin-Storage]]) |
+| `uploads/` | All uploaded attachments, covers, and avatars (default location — see [Admin: Storage](Admin-Storage)) |
 | `plugins-data/` | Each installed plugin's own database + files (present only if plugins are installed) |
 | `plugins-code/` | The installed plugin code, so a restore is self-contained (dev-linked plugins are skipped) |
 
@@ -86,7 +86,7 @@ The following actions are recorded in the [Audit-Log](Audit-Log):
 
 ## See also
 
-- [[Admin: Storage|Admin-Storage]] — replicate backups to S3-compatible storage
+- [Admin: Storage](Admin-Storage) — replicate backups to S3-compatible storage
 - [Encryption-Key-Rotation](Encryption-Key-Rotation)
 - [Admin-Panel-Overview](Admin-Panel-Overview)
 - [Security-Hardening](Security-Hardening)

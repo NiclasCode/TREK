@@ -28,7 +28,7 @@ Route segments reset at any transport reservation (flight, train, car, bus, or c
 
 The **Optimize** button in the day's route tools reorders places in the current day to minimize total travel distance. A **nearest-neighbor** pass produces a good starting order, then a **2-opt** pass untangles the crossings that pass leaves behind — both measure straight-line (Euclidean) distance.
 
-With **Optimize route from accommodation** (Settings → General → Travel & map, on by default) the run is anchored on the day's hotel: a loop out from and back to it, or a hotel-to-hotel run on a transfer day. With the setting off, or on a day whose accommodation has no coordinates, it starts from the first place instead. A day with fewer than three places is left alone.
+With **Optimize route from accommodation** (Settings → General → Travel & map, on by default) the run is anchored on the day's hotel: a loop out from and back to it, or a hotel-to-hotel run on a transfer day. With the setting off, or on a day whose accommodation has no coordinates, it starts from the first place instead. A day with fewer than three places is left alone on desktop, and the mobile day sheet only offers the button from three up. The **Optimize** action in the plan screen's **Plan** mode has no such floor — two movable places with coordinates are enough, and with a hotel anchoring the run even those two can swap.
 
 Only free places are reordered. A place keeps its slot if you locked it, or if it has a time set — a timed stop is anchored by its time. Those stops stay where they are and the reordered ones fill the gaps between them. On mobile there is no lock, so only a set time pins a stop.
 
@@ -36,7 +36,7 @@ The reorder can be undone immediately using the undo action that appears after i
 
 ## Open the day in a map app
 
-Two icon buttons in the day's route tools hand the current day to an external map app, both using its places in planned order, with the hotel bookends when the day has them.
+Two icon buttons in the day's route tools hand the current day to an external map app, both using its places in planned order, bookended by the day's accommodation exactly the way the drawn route is.
 
 **Open in Google Maps** builds a `https://www.google.com/maps/dir/lat,lng/lat,lng/…` URL containing all stops in order and opens it in a new tab. A day with a single stop opens as a map search on that point instead.
 
