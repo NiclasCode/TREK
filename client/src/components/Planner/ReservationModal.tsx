@@ -358,7 +358,7 @@ export function ReservationModal({ isOpen, onClose, onSave, reservation, days, p
     if (reservation?.id) {
       setUploadingFile(true)
       try {
-        var results = await Promise.allSettled(list.map(file => {
+        const results = await Promise.allSettled(list.map(file => {
           const fd = new FormData()
           fd.append('file', file)
           fd.append('reservation_id', String(reservation.id))
@@ -412,13 +412,12 @@ export function ReservationModal({ isOpen, onClose, onSave, reservation, days, p
     }
     // handles pasted files (only last item, not full clipboard)
     const onPaste = (e: ClipboardEvent) => {
-      const item = e.clipboardData?.items[0]
-      if (!item) return
-      const files = getFilesFromTransferItems(item)
+      const files = getFilesFromTransferItems(Array.from(e.clipboardData?.items ?? []))
       if (files.length === 0) return
       e.preventDefault()
-      handleFiles(files);
+      handleFiles([files[0]])
     }
+
     // handles dropped files
     const onDrop = (e: DragEvent) => {
       const items = e.dataTransfer?.items ?? [];
