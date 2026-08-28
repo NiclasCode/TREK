@@ -106,7 +106,6 @@ export function ReservationModal({ isOpen, onClose, onSave, reservation, days, p
   const [linkedFileIds, setLinkedFileIds] = useState<number[]>([])
   // Travelers assigned to this booking (#1517) — seeded on open, persisted after the save resolves.
   const [travelerIds, setTravelerIds] = useState<Set<number>>(new Set())
-  const [draggedFiels, setDraggedFiles] = useState<File[]>([])
 
   const assignmentOptions = useMemo(
     () => buildAssignmentOptions(days, assignments, t, locale),
@@ -350,24 +349,33 @@ export function ReservationModal({ isOpen, onClose, onSave, reservation, days, p
   const handleFileChange = async (e) => {
     const file = (e.target as HTMLInputElement).files?.[0]
     if (!file) return
+    uploadFile(file)
+    e.target.value = ''
+  }
+
+  const uploadFile = async (files: File[] | File) => {
+    const list = Array.isArray(files) ? files : [files];
     if (reservation?.id) {
       setUploadingFile(true)
       try {
-        const fd = new FormData()
-        fd.append('file', file)
-        fd.append('reservation_id', String(reservation.id))
-        fd.append('description', reservation.title)
-        await onFileUpload(fd)
-        toast.success(t('reservations.toast.fileUploaded'))
+        var results = await Promise.allSettled(list.map(file => {
+          const fd = new FormData()
+          fd.append('file', file)
+          fd.append('reservation_id', String(reservation.id))
+          fd.append('description', reservation.title)
+          return onFileUpload(fd)
+        }))
+        
+        const failed = results.filter(r => r.status === 'rejected').length
+        if (failed) toast.error(t('reservations.toast.uploadError'))
+        else toast.success(t('reservations.toast.fileUploaded'))
       } catch {
         toast.error(t('reservations.toast.uploadError'))
       } finally {
         setUploadingFile(false)
-        e.target.value = ''
       }
     } else {
-      setPendingFiles(prev => [...prev, file])
-      e.target.value = ''
+      setPendingFiles(prev => [...prev, ...list])
     }
   }
 
@@ -383,25 +391,43 @@ export function ReservationModal({ isOpen, onClose, onSave, reservation, days, p
 
   useEffect(() => {
     if (!canUploadFiles || !isOpen) return
-    const handleFiles = (items: DataTransferItemList, e: Event) => {
-      if (!items) return
-      for (const item of Array.from(items)) {
-        if (item.type.startsWith('image/') || item.type === 'application/pdf') {
-          e.preventDefault()
-          const file = item.getAsFile()
-          if (file) setPendingFiles(prev => [...prev, file])
-          return
-        }
+
+    const isAccepted = (f: File) => f.type.startsWith('image/') || f.type === 'application/pdf';
+    const getFilesFromTransferItems = (items: DataTransferItem[] | DataTransferItem) => {
+      const itemsList = Array.isArray(items) ? items : [items]
+      const fileList = itemsList
+        .filter(item => item.kind === 'file')
+        .map(item => item.getAsFile())
+        .filter((f: File) => f !== null && isAccepted(f))
+      
+      if (!fileList || fileList.length === 0) {
+        return []
       }
+      return fileList
     }
+    // checks files for its type and uploads them appropriatly when correct filetype
+    const handleFiles = async (files: File[]) => {
+      if (!files || files.length === 0) return false;
+      uploadFile(files);
+    }
+    // handles pasted files (only last item, not full clipboard)
     const onPaste = (e: ClipboardEvent) => {
-      const items = e.clipboardData?.items 
-      handleFiles(items, e);
+      const item = e.clipboardData?.items[0]
+      if (!item) return
+      const files = getFilesFromTransferItems(item)
+      if (files.length === 0) return
+      e.preventDefault()
+      handleFiles(files);
     }
+    // handles dropped files
     const onDrop = (e: DragEvent) => {
-      const items = e.dataTransfer?.items;
-      handleFiles(items, e);
+      const items = e.dataTransfer?.items ?? [];
+      if (items.length === 0) return;
+      e.preventDefault()
+      const files = getFilesFromTransferItems(Array.from(items))
+      handleFiles(files)
     }
+    // prevents default even of dragover => doesnt open new site on drop
     const onDragOver = (e: DragEvent) => {
       e.preventDefault();
     }
