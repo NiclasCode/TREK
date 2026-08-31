@@ -418,7 +418,7 @@ export function ReservationModal({ isOpen, onClose, onSave, reservation, days, p
       handleFiles([files[0]])
     }
 
-    // handles dropped files
+    // // handles dropped files\
     const onDrop = (e: DragEvent) => {
       const items = e.dataTransfer?.items ?? [];
       if (items.length === 0) return;

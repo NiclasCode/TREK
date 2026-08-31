@@ -1,5 +1,5 @@
 // FE-PLANNER-RESMODAL-001 to FE-PLANNER-RESMODAL-080
-import { render, screen, waitFor, fireEvent, within } from '../../../tests/helpers/render';
+import { render, screen, waitFor, fireEvent, createEvent, within } from '../../../tests/helpers/render';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { server } from '../../../tests/helpers/msw/server';
@@ -1422,5 +1422,212 @@ describe('ReservationModal', () => {
     render(<ReservationModal {...defaultProps} reservation={res} days={reviewDays()} accommodations={[]} />);
     // Hotel place picker still shows its placeholder — no crash on the missing record.
     expect(screen.getByText('—')).toBeInTheDocument();
+  });
+
+  // ── Paste / drag-and-drop attachments ───────────────────────────────────────
+  // The modal listens on `document` while it is open, so these fire at the document
+  // level rather than on a drop zone element.
+
+  // A clipboard/drag entry carrying a file. jsdom has no real DataTransferItem.
+  const fileItem = (file: File) =>
+    ({ kind: 'file', type: file.type, getAsFile: () => file }) as unknown as DataTransferItem;
+  // The `text/html` flavour browsers put on the clipboard next to a copied web image.
+  const stringItem = (type: string) =>
+    ({ kind: 'string', type, getAsFile: () => null }) as unknown as DataTransferItem;
+
+  const png = (name: string) => new File(['img'], name, { type: 'image/png' });
+  const pdf = (name: string) => new File(['doc'], name, { type: 'application/pdf' });
+
+  const filenames = (onFileUpload: ReturnType<typeof vi.fn>) =>
+    onFileUpload.mock.calls
+      .map(([fd]) => (fd as FormData).get('file'))
+      .map(f => (f as File).name)
+      .sort();
+
+  it('FE-PLANNER-RESMODAL-087: pasting an image uploads it to an existing booking', async () => {
+    const addToast = vi.fn();
+    window.__addToast = addToast;
+    const onFileUpload = vi.fn().mockResolvedValue(undefined);
+    const res = buildReservation({ id: 20, title: 'Hotel Zurich', type: 'hotel' });
+
+    render(<ReservationModal {...defaultProps} reservation={res} onFileUpload={onFileUpload} />);
+    fireEvent.paste(document, { clipboardData: { items: [fileItem(png('screenshot.png'))] } });
+
+    await waitFor(() => expect(onFileUpload).toHaveBeenCalledTimes(1));
+    const [fd] = onFileUpload.mock.calls[0] as [FormData];
+    expect((fd.get('file') as File).name).toBe('screenshot.png');
+    expect(fd.get('reservation_id')).toBe('20');
+    expect(fd.get('description')).toBe('Hotel Zurich');
+    await waitFor(() => expect(addToast).toHaveBeenCalledWith('File uploaded', 'success', undefined));
+    delete window.__addToast;
+  });
+
+  it('FE-PLANNER-RESMODAL-088: copying an image off a webpage uploads the bitmap, not the text/html flavour', async () => {
+    const onFileUpload = vi.fn().mockResolvedValue(undefined);
+    const res = buildReservation({ id: 21, title: 'Trip', type: 'other' });
+
+    render(<ReservationModal {...defaultProps} reservation={res} onFileUpload={onFileUpload} />);
+    // Chrome/Safari order: the markup first, the bitmap second.
+    fireEvent.paste(document, {
+      clipboardData: { items: [stringItem('text/html'), fileItem(png('image.png'))] },
+    });
+
+    await waitFor(() => expect(onFileUpload).toHaveBeenCalledTimes(1));
+    expect(filenames(onFileUpload)).toEqual(['image.png']);
+  });
+
+  it('FE-PLANNER-RESMODAL-089: pasting plain text uploads nothing and leaves the event alone', async () => {
+    const onFileUpload = vi.fn().mockResolvedValue(undefined);
+    const res = buildReservation({ id: 22, title: 'Trip', type: 'other' });
+
+    render(<ReservationModal {...defaultProps} reservation={res} onFileUpload={onFileUpload} />);
+    const evt = createEvent.paste(document, { clipboardData: { items: [stringItem('text/plain')] } });
+    fireEvent(document, evt);
+
+    // Not prevented — typing/pasting text into the form's inputs must still work.
+    expect(evt.defaultPrevented).toBe(false);
+    await waitFor(() => expect(onFileUpload).not.toHaveBeenCalled());
+  });
+
+  it('FE-PLANNER-RESMODAL-090: pasting takes a single file even when the clipboard carries several', async () => {
+    const onFileUpload = vi.fn().mockResolvedValue(undefined);
+    const res = buildReservation({ id: 23, title: 'Trip', type: 'other' });
+
+    render(<ReservationModal {...defaultProps} reservation={res} onFileUpload={onFileUpload} />);
+    fireEvent.paste(document, {
+      clipboardData: { items: [fileItem(png('first.png')), fileItem(png('second.png'))] },
+    });
+
+    await waitFor(() => expect(onFileUpload).toHaveBeenCalledTimes(1));
+    expect(filenames(onFileUpload)).toEqual(['first.png']);
+  });
+
+  it('FE-PLANNER-RESMODAL-091: dropping several files uploads every one of them', async () => {
+    const addToast = vi.fn();
+    window.__addToast = addToast;
+    const onFileUpload = vi.fn().mockResolvedValue(undefined);
+    const res = buildReservation({ id: 24, title: 'Trip', type: 'other' });
+
+    render(<ReservationModal {...defaultProps} reservation={res} onFileUpload={onFileUpload} />);
+    fireEvent.drop(document, {
+      dataTransfer: {
+        items: [fileItem(png('a.png')), fileItem(pdf('voucher.pdf')), fileItem(png('b.png'))],
+      },
+    });
+
+    await waitFor(() => expect(onFileUpload).toHaveBeenCalledTimes(3));
+    expect(filenames(onFileUpload)).toEqual(['a.png', 'b.png', 'voucher.pdf']);
+    // One toast for the batch, not one per file.
+    await waitFor(() => expect(addToast).toHaveBeenCalledWith('File uploaded', 'success', undefined));
+    expect(addToast).toHaveBeenCalledTimes(1);
+    delete window.__addToast;
+  });
+
+  it('FE-PLANNER-RESMODAL-092: an unsupported dropped type is filtered out', async () => {
+    const onFileUpload = vi.fn().mockResolvedValue(undefined);
+    const res = buildReservation({ id: 25, title: 'Trip', type: 'other' });
+
+    render(<ReservationModal {...defaultProps} reservation={res} onFileUpload={onFileUpload} />);
+    fireEvent.drop(document, {
+      dataTransfer: {
+        items: [
+          fileItem(new File(['x'], 'notes.txt', { type: 'text/plain' })),
+          fileItem(png('ticket.png')),
+        ],
+      },
+    });
+
+    await waitFor(() => expect(onFileUpload).toHaveBeenCalledTimes(1));
+    expect(filenames(onFileUpload)).toEqual(['ticket.png']);
+  });
+
+  it('FE-PLANNER-RESMODAL-093: one failed upload in a dropped batch reports the error once', async () => {
+    const addToast = vi.fn();
+    window.__addToast = addToast;
+    const onFileUpload = vi
+      .fn()
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(new Error('disk full'));
+    const res = buildReservation({ id: 26, title: 'Trip', type: 'other' });
+
+    render(<ReservationModal {...defaultProps} reservation={res} onFileUpload={onFileUpload} />);
+    fireEvent.drop(document, {
+      dataTransfer: { items: [fileItem(png('ok.png')), fileItem(png('bad.png'))] },
+    });
+
+    await waitFor(() => expect(addToast).toHaveBeenCalledWith('Failed to upload', 'error', undefined));
+    expect(addToast).toHaveBeenCalledTimes(1);
+    expect(addToast).not.toHaveBeenCalledWith('File uploaded', 'success', undefined);
+    delete window.__addToast;
+  });
+
+  it('FE-PLANNER-RESMODAL-094: files dropped on an unsaved booking queue as pending instead of uploading', async () => {
+    const onFileUpload = vi.fn().mockResolvedValue(undefined);
+
+    render(<ReservationModal {...defaultProps} reservation={null} onFileUpload={onFileUpload} />);
+    fireEvent.drop(document, {
+      dataTransfer: { items: [fileItem(png('receipt.png')), fileItem(pdf('booking.pdf'))] },
+    });
+
+    await waitFor(() => expect(screen.getByText('receipt.png')).toBeInTheDocument());
+    expect(screen.getByText('booking.pdf')).toBeInTheDocument();
+    expect(onFileUpload).not.toHaveBeenCalled();
+  });
+
+  it('FE-PLANNER-RESMODAL-095: pending dropped files upload once the new booking is saved', async () => {
+    const onFileUpload = vi.fn().mockResolvedValue(undefined);
+    const onSave = vi.fn().mockResolvedValue({ id: 77 });
+
+    render(
+      <ReservationModal {...defaultProps} reservation={null} onSave={onSave} onFileUpload={onFileUpload} />,
+    );
+    await userEvent.type(screen.getByPlaceholderText(/e\.g\. Lufthansa/i), 'Sushi Bar');
+    fireEvent.drop(document, { dataTransfer: { items: [fileItem(pdf('confirmation.pdf'))] } });
+    await waitFor(() => expect(screen.getByText('confirmation.pdf')).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole('button', { name: /^Add$/i }));
+
+    await waitFor(() => expect(onFileUpload).toHaveBeenCalledTimes(1));
+    const [fd] = onFileUpload.mock.calls[0] as [FormData];
+    expect((fd.get('file') as File).name).toBe('confirmation.pdf');
+    expect(fd.get('reservation_id')).toBe('77');
+  });
+
+  it('FE-PLANNER-RESMODAL-096: dragover is prevented so the browser does not navigate to the file', () => {
+    const res = buildReservation({ id: 27, title: 'Trip', type: 'other' });
+    render(<ReservationModal {...defaultProps} reservation={res} />);
+
+    const evt = createEvent.dragOver(document, { dataTransfer: { items: [] } });
+    fireEvent(document, evt);
+    expect(evt.defaultPrevented).toBe(true);
+  });
+
+  it('FE-PLANNER-RESMODAL-097: closing the modal detaches the paste and drop listeners', async () => {
+    const onFileUpload = vi.fn().mockResolvedValue(undefined);
+    const res = buildReservation({ id: 28, title: 'Trip', type: 'other' });
+
+    const { rerender } = render(
+      <ReservationModal {...defaultProps} reservation={res} onFileUpload={onFileUpload} />,
+    );
+    rerender(
+      <ReservationModal {...defaultProps} isOpen={false} reservation={res} onFileUpload={onFileUpload} />,
+    );
+
+    fireEvent.paste(document, { clipboardData: { items: [fileItem(png('late.png'))] } });
+    fireEvent.drop(document, { dataTransfer: { items: [fileItem(png('later.png'))] } });
+
+    await waitFor(() => expect(onFileUpload).not.toHaveBeenCalled());
+  });
+
+  it('FE-PLANNER-RESMODAL-098: no upload handler means paste and drop are inert', async () => {
+    const res = buildReservation({ id: 29, title: 'Trip', type: 'other' });
+    render(<ReservationModal {...defaultProps} reservation={res} onFileUpload={undefined} />);
+
+    const dropEvt = createEvent.drop(document, { dataTransfer: { items: [fileItem(png('x.png'))] } });
+    fireEvent(document, dropEvt);
+
+    // Nothing is claiming the drop, so the page-level default stays intact.
+    expect(dropEvt.defaultPrevented).toBe(false);
+    expect(screen.queryByText('x.png')).not.toBeInTheDocument();
   });
 });
